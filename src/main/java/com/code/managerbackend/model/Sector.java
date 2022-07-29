@@ -1,9 +1,11 @@
 package com.code.managerbackend.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotEmpty;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -16,8 +18,11 @@ public class Sector {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false, length = 150)
+    @NotEmpty(message = "{field.name.mandatory}")
     private String name;
 
+    @JsonFormat(pattern = "dd/MM/yyyy")
     private LocalDateTime initDate;
 
     private Boolean situation;

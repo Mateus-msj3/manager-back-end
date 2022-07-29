@@ -1,0 +1,31 @@
+package com.code.managerbackend.config;
+
+import org.springframework.context.MessageSource;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.support.ReloadableResourceBundleMessageSource;
+import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
+
+import java.util.Locale;
+
+@Configuration
+public class InternationalizationConfig {
+
+    @Bean
+    public MessageSource messageSource() {
+        ReloadableResourceBundleMessageSource messageSource = new ReloadableResourceBundleMessageSource();
+        //Busca o nome do arquivo que contém as mensagens de validação
+        messageSource.setBasename("classpath:messages");
+        //Encoding que pega acentuações etc...
+        messageSource.setDefaultEncoding("ISO-8859-1");
+        messageSource.setDefaultLocale(Locale.getDefault());
+        return messageSource;
+    }
+
+    @Bean
+    public LocalValidatorFactoryBean validatorFactoryBean(){
+        LocalValidatorFactoryBean localValidatorFactoryBean = new LocalValidatorFactoryBean();
+        localValidatorFactoryBean.setValidationMessageSource(messageSource());
+        return localValidatorFactoryBean;
+    }
+}

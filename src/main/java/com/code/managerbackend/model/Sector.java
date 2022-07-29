@@ -26,5 +26,6 @@ public class Sector {
     private List<Office> offices = new ArrayList<>();
 
     @UpdateTimestamp
+    @Column(nullable = false, columnDefinition = "datetime")
     private LocalDateTime updatedAt;
 }

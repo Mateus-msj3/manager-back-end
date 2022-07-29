@@ -23,13 +23,14 @@ public class Office {
     private BigDecimal maximumSalaryRange;
 
     @ManyToOne
-    @JoinColumn(name = "office_id")
+    @JoinColumn(name = "sector_id")
     private Sector sector;
 
-    @Column(updatable = false)
     @CreationTimestamp
+    @Column(nullable = false, columnDefinition = "datetime")
     private LocalDateTime createdAt;
 
     @UpdateTimestamp
+    @Column(nullable = false, columnDefinition = "datetime")
     private LocalDateTime updatedAt;
 }

@@ -1,5 +1,7 @@
 package com.code.managerbackend.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -28,6 +30,7 @@ public class Office {
 
     @ManyToOne
     @JoinColumn(name = "sector_id")
+    @JsonBackReference
     private Sector sector;
 
     @CreationTimestamp

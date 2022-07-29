@@ -2,6 +2,7 @@ package com.code.managerbackend.service.implementation;
 
 import com.code.managerbackend.dto.OfficeDTO;
 import com.code.managerbackend.exception.ObjectNotFoundException;
+import com.code.managerbackend.exception.ResourceNotFoundException;
 import com.code.managerbackend.model.Office;
 import com.code.managerbackend.repository.OfficeRepository;
 import com.code.managerbackend.service.OfficeService;
@@ -34,10 +35,9 @@ public class OfficeServiceImpl implements OfficeService {
 
     @Override
     public OfficeDTO listById(Long id) {
-        Optional<Office> office = officeRepository.findById(id);
-        if (office.isEmpty()) {
-            throw new ObjectNotFoundException("Office not found");
-        }
+        Optional<Office> office = Optional.ofNullable(officeRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Not found office with id = " + id)));
+
         OfficeDTO officeDTO = modelMapper.map(office.get(), OfficeDTO.class);
 
         return officeDTO;
@@ -52,16 +52,12 @@ public class OfficeServiceImpl implements OfficeService {
 
     @Override
     public OfficeDTO update(OfficeDTO officeDTO) {
-        try {
-            Optional<Office> currentOffice = officeRepository.findById(officeDTO.getId());
-            if (currentOffice.isPresent()) {
+            Optional<Office> currentOffice = Optional.ofNullable(officeRepository.findById(officeDTO.getId())
+                    .orElseThrow(() -> new ResourceNotFoundException("Not found office with id = " + officeDTO.getId())));
+
                 Office office = modelMapper.map(officeDTO, Office.class);
                 BeanUtils.copyProperties(officeDTO, currentOffice.get(), "id");
                 officeRepository.save(office);
-            }
-        } catch (NoSuchElementException exception) {
-            throw new ObjectNotFoundException("Office not found.");
-        }
 
         return officeDTO;
     }

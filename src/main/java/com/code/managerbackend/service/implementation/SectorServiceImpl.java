@@ -1,7 +1,9 @@
 package com.code.managerbackend.service.implementation;
 
+import com.code.managerbackend.dto.OfficeDTO;
 import com.code.managerbackend.dto.SectorDTO;
 import com.code.managerbackend.exception.ObjectNotFoundException;
+import com.code.managerbackend.model.Office;
 import com.code.managerbackend.model.Sector;
 import com.code.managerbackend.repository.SectorRepository;
 import com.code.managerbackend.service.SectorService;
@@ -46,6 +48,9 @@ public class SectorServiceImpl implements SectorService {
     @Override
     public SectorDTO save(SectorDTO sectorDTO) {
         Sector sector = modelMapper.map(sectorDTO, Sector.class);
+        for (Office office: sector.getOffices()) {
+            office.setSector(sector);
+        }
         sectorRepository.save(sector);
         return sectorDTO;
     }

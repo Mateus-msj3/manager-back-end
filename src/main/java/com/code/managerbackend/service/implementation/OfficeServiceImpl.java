@@ -66,7 +66,7 @@ public class OfficeServiceImpl implements OfficeService {
     public void delete(Long id) {
         Optional<Office> office = officeRepository.findById(id);
         if (office.isEmpty()) {
-            throw new ObjectNotFoundException("Office not found");
+            throw new ResourceNotFoundException("Not found office with id = " + id);
         }
         officeRepository.deleteById(id);
     }

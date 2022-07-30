@@ -41,7 +41,7 @@ public class OfficeController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> delete(Long id) {
+    public ResponseEntity<?> delete(@PathVariable Long id) {
         officeService.delete(id);
         return ResponseEntity.noContent().build();
     }

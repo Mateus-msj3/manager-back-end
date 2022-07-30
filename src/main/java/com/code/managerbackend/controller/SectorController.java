@@ -41,7 +41,7 @@ public class SectorController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> delete(Long id) {
+    public ResponseEntity<?> delete(@PathVariable Long id) {
         sectorService.delete(id);
         return ResponseEntity.noContent().build();
     }

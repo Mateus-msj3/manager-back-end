@@ -24,8 +24,10 @@ public class Office {
     @NotEmpty(message = "{field.name.mandatory}")
     private String name;
 
+    @Column(name = "min_salary_range")
     private BigDecimal minimumSalaryRange;
 
+    @Column(name = "max_salary_range")
     private BigDecimal maximumSalaryRange;
 
     @ManyToOne

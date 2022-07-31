@@ -4,6 +4,7 @@ import com.code.managerbackend.dto.OfficeDTO;
 import com.code.managerbackend.dto.SectorDTO;
 import com.code.managerbackend.exception.ObjectNotFoundException;
 import com.code.managerbackend.exception.ResourceNotFoundException;
+import com.code.managerbackend.exception.RuleBusinessException;
 import com.code.managerbackend.model.Office;
 import com.code.managerbackend.model.Sector;
 import com.code.managerbackend.repository.SectorRepository;
@@ -47,6 +48,8 @@ public class SectorServiceImpl implements SectorService {
 
     @Override
     public SectorDTO save(SectorDTO sectorDTO) {
+        beforeSavingVerifyName(sectorDTO.getName());
+
         Sector sector = modelMapper.map(sectorDTO, Sector.class);
         for (Office office : sector.getOffices()) {
             office.setSector(sector);
@@ -59,6 +62,8 @@ public class SectorServiceImpl implements SectorService {
     public SectorDTO update(SectorDTO sectorDTO) {
         Optional<Sector> currentSector = Optional.ofNullable(sectorRepository.findById(sectorDTO.getId())
                 .orElseThrow(() -> new ResourceNotFoundException("Not found office with id = " + sectorDTO.getId())));
+
+        beforeSavingVerifyName(sectorDTO.getName());
 
         Sector sector = modelMapper.map(sectorDTO, Sector.class);
 
@@ -76,5 +81,11 @@ public class SectorServiceImpl implements SectorService {
                 .orElseThrow(() -> new ResourceNotFoundException("Not found office with id = " + id)));
 
         sectorRepository.deleteById(id);
+    }
+
+    private void beforeSavingVerifyName(String name) {
+        if (sectorRepository.existsByName(name)) {
+            throw new RuleBusinessException("This name is already used by another sector.");
+        }
     }
 }

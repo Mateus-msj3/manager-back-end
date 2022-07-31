@@ -1,9 +1,7 @@
 package com.code.managerbackend.service;
 
 import com.code.managerbackend.dto.SectorDTO;
-import com.code.managerbackend.repository.SectorRepository;
-import com.code.managerbackend.service.implementation.SectorServiceImpl;
-import org.junit.jupiter.api.BeforeEach;
+import com.code.managerbackend.model.Office;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -12,8 +10,10 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.time.Month;
+import java.util.Arrays;
+import java.util.List;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
@@ -29,30 +29,72 @@ public class SectorServiceTest {
     public void saveSectorTest() {
 
         //Cenário
-        SectorDTO sectorDTO = SectorDTO.builder()
+        SectorDTO sectorDTO = createSector();
+
+        //Retorno
+        Mockito.when(sectorService.save(sectorDTO)).thenReturn(createSavedSector());
+
+        //Execução
+        SectorDTO savedSectorSucess = sectorService.save(sectorDTO);
+
+        //Verificação
+        assertThat(savedSectorSucess.getId()).isNotNull();
+        assertThat(savedSectorSucess.getName()).isEqualTo("Marketing");
+        assertThat(savedSectorSucess.getInitDate()).isEqualTo(LocalDate.now());
+        assertThat(savedSectorSucess.getSituation()).isEqualTo(true);
+    }
+
+    @Test
+    @DisplayName("Lançar um erro quando tentar salvar um setor com o nome já existente")
+    public void shouldNotSaveSectorWithDuplicateName() {
+
+        //Cenário
+        SectorDTO sectorDTO = createSector();
+
+        //Execução
+        Mockito.when(sectorService.save(sectorDTO)).thenReturn(sectorDTO);
+
+        //Verificação
+        assertThat(sectorDTO.getName()).isEqualTo("Marketing");
+
+        //Não chamar o save do repository
+        Mockito.verify(sectorService, Mockito.never()).save(sectorDTO);
+
+    }
+
+
+    private SectorDTO createSector() {
+
+        Office office = createOfficeToSector();
+
+        List<Office> officeList = Arrays.asList(office);
+        return SectorDTO.builder()
                 .name("Marketing")
                 .initDate(LocalDate.now())
                 .situation(true)
-                .offices(null)
+                .offices(officeList)
                 .build();
+    }
 
-        //Retorno
-        Mockito.when(sectorService.save(sectorDTO))
-                .thenReturn(SectorDTO.builder()
-                        .id(1l)
-                        .name("Marketing")
-                        .initDate(LocalDate.now())
-                        .situation(true)
-                        .offices(null)
-                        .build());
+    private Office createOfficeToSector() {
+        return Office.builder()
+                .name("Social mídia")
+                .minimumSalaryRange(new BigDecimal(800.0))
+                .maximumSalaryRange(new BigDecimal(3000.0))
+                .sector(null)
+                .build();
+    }
 
-        //Execução
-        SectorDTO savedSector = sectorService.save(sectorDTO);
+    private SectorDTO createSavedSector() {
+        Office office = createOfficeToSector();
+        List<Office> officeList = Arrays.asList(office);
 
-        //Verificação
-        assertThat(savedSector.getId()).isNotNull();
-        assertThat(savedSector.getName()).isEqualTo("Marketing");
-        assertThat(savedSector.getInitDate()).isEqualTo(LocalDate.now());
-        assertThat(savedSector.getSituation()).isEqualTo(true);
+        return SectorDTO.builder()
+                .id(1L)
+                .name("Marketing")
+                .initDate(LocalDate.now())
+                .situation(true)
+                .offices(officeList)
+                .build();
     }
 }

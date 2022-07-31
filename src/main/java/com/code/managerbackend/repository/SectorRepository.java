@@ -8,4 +8,6 @@ import org.springframework.transaction.annotation.Transactional;
 @Repository
 @Transactional
 public interface SectorRepository extends JpaRepository<Sector, Long> {
+
+    boolean existsByName(String name);
 }

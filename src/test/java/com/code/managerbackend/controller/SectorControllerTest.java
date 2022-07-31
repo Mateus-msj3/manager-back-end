@@ -1,6 +1,7 @@
 package com.code.managerbackend.controller;
 
 import com.code.managerbackend.dto.SectorDTO;
+import com.code.managerbackend.exception.RuleBusinessException;
 import com.code.managerbackend.model.Office;
 import com.code.managerbackend.model.Sector;
 import com.code.managerbackend.service.SectorService;
@@ -49,44 +50,14 @@ public class SectorControllerTest {
     @MockBean
     SectorService sectorService;
 
-    private String objectToJson(SectorDTO sectorDTO) throws Exception {
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.registerModule(new JavaTimeModule());
-        mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
-
-        String value = mapper.writeValueAsString(sectorDTO);
-
-        return value;
-    }
-
     @Test
     @DisplayName("Deve criar um setor com sucesso")
     public void createdSectorTest() throws Exception {
 
-        Office office = Office.builder()
-                .name("Social mídia")
-                .minimumSalaryRange(new BigDecimal(800.0))
-                .maximumSalaryRange(new BigDecimal(3000.0))
-                .sector(null)
-                .build();
-
-        List<Office> officeList = Arrays.asList(office);
-
         //Objeto passado na requisição
-        SectorDTO sectorDTO = SectorDTO.builder()
-                .name("Marketing")
-                .initDate(LocalDate.of(2022, Month.JULY, 30))
-                .situation(true)
-                .offices(officeList)
-                .build();
+        SectorDTO sectorDTO = createSector();
 
-        SectorDTO savedSector = SectorDTO.builder()
-                .id(1L)
-                .name("Marketing")
-                .initDate(LocalDate.of(2022, Month.JULY, 30))
-                .situation(true)
-                .offices(officeList)
-                .build();
+        SectorDTO savedSector = createSavedSector();
 
         BDDMockito.given(sectorService.save(sectorDTO)).willReturn(savedSector);
 
@@ -127,6 +98,80 @@ public class SectorControllerTest {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("errors" , hasSize(1)))
                 .andDo(print());
+    }
+
+    @Test
+    @DisplayName("Deve lançar um erro ao cadastar um setor com um nome já existente")
+    public void createSectorWithDuplicateName() throws Exception {
+        SectorDTO sectorDTO = createSector();
+
+        String json = objectToJson(sectorDTO);
+
+        var message = "This name is already used by another sector.";
+
+        //Execução
+        BDDMockito.given(sectorService.save(sectorDTO))
+                .willThrow(new RuleBusinessException(message));
+        
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders
+                .post(API)
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .content(json);
+        
+        mockMvc
+                .perform(request)
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("errors" , hasSize(1)))
+                .andExpect(jsonPath("errors[0]").value(message))
+                .andDo(print());
+    }
+
+    private SectorDTO createSector() {
+
+        Office office = createOfficeToSector();
+
+        List<Office> officeList = Arrays.asList(office);
+        return SectorDTO.builder()
+                .name("Marketing")
+                .initDate(LocalDate.of(2022, Month.JULY, 30))
+                .situation(true)
+                .offices(officeList)
+                .build();
+    }
+
+    private Office createOfficeToSector() {
+        return Office.builder()
+                .name("Social mídia")
+                .minimumSalaryRange(new BigDecimal(800.0))
+                .maximumSalaryRange(new BigDecimal(3000.0))
+                .sector(null)
+                .build();
+    }
+
+
+    private SectorDTO createSavedSector() {
+        Office office = createOfficeToSector();
+        List<Office> officeList = Arrays.asList(office);
+
+        return SectorDTO.builder()
+                .id(1L)
+                .name("Marketing")
+                .initDate(LocalDate.of(2022, Month.JULY, 30))
+                .situation(true)
+                .offices(officeList)
+                .build();
+    }
+
+
+    private String objectToJson(SectorDTO sectorDTO) throws Exception {
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.registerModule(new JavaTimeModule());
+        mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+
+        String value = mapper.writeValueAsString(sectorDTO);
+
+        return value;
     }
 
 }

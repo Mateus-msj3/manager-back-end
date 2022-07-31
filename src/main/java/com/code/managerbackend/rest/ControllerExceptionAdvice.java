@@ -2,6 +2,7 @@ package com.code.managerbackend.rest;
 
 import com.code.managerbackend.exception.ErrorMessage;
 import com.code.managerbackend.exception.ResourceNotFoundException;
+import com.code.managerbackend.exception.RuleBusinessException;
 import com.code.managerbackend.exception.ValidErrors;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,6 +28,12 @@ public class ControllerExceptionAdvice {
                 .map(objectError -> objectError.getDefaultMessage())
                 .collect(Collectors.toList());
         return new ValidErrors(messages);
+    }
+
+    @ExceptionHandler(RuleBusinessException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ValidErrors handleRuleBusinessException(RuleBusinessException exception) {
+        return new ValidErrors(exception);
     }
 
     @ExceptionHandler(ResourceNotFoundException.class)

@@ -17,4 +17,8 @@ public class ValidErrors {
     public ValidErrors(String message) {
         this.errors = Arrays.asList(message);
     }
+
+    public ValidErrors(RuleBusinessException exception) {
+        this.errors = Arrays.asList(exception.getMessage());
+    }
 }

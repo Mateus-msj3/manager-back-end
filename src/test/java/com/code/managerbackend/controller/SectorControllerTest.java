@@ -4,9 +4,11 @@ import com.code.managerbackend.dto.SectorDTO;
 import com.code.managerbackend.model.Office;
 import com.code.managerbackend.model.Sector;
 import com.code.managerbackend.service.SectorService;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import org.hamcrest.Matchers;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -28,6 +30,7 @@ import java.time.Month;
 import java.util.Arrays;
 import java.util.List;
 
+import static org.hamcrest.Matchers.hasSize;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -44,7 +47,17 @@ public class SectorControllerTest {
     MockMvc mockMvc;
 
     @MockBean
-    private SectorService sectorService;
+    SectorService sectorService;
+
+    private String objectToJson(SectorDTO sectorDTO) throws Exception {
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.registerModule(new JavaTimeModule());
+        mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+
+        String value = mapper.writeValueAsString(sectorDTO);
+
+        return value;
+    }
 
     @Test
     @DisplayName("Deve criar um setor com sucesso")
@@ -78,11 +91,7 @@ public class SectorControllerTest {
         BDDMockito.given(sectorService.save(sectorDTO)).willReturn(savedSector);
 
         //Json que será retornado como resposta
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.registerModule(new JavaTimeModule());
-        mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
-
-        String json = mapper.writeValueAsString(sectorDTO);
+        String json = objectToJson(sectorDTO);
 
         //Desenho da requisição
         MockHttpServletRequestBuilder request = MockMvcRequestBuilders
@@ -101,4 +110,23 @@ public class SectorControllerTest {
                 .andDo(print());
 
     }
+
+    @Test
+    @DisplayName("Deve lançar um erro de validação quando não houver dados válidos")
+    public void createInvalidSectorTest() throws Exception {
+        String json = objectToJson(new SectorDTO());
+
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders
+                .post(API)
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .content(json);
+
+        mockMvc
+                .perform(request)
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("errors" , hasSize(1)))
+                .andDo(print());
+    }
+
 }

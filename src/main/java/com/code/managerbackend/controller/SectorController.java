@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -28,7 +29,7 @@ public class SectorController {
     }
 
     @PostMapping
-    public ResponseEntity<SectorDTO> save(@RequestBody SectorDTO sectorDTO) {
+    public ResponseEntity<SectorDTO> save(@RequestBody @Valid SectorDTO sectorDTO) {
         sectorDTO = sectorService.save(sectorDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(sectorDTO);
     }

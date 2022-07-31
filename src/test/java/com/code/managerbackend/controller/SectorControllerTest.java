@@ -1,6 +1,7 @@
 package com.code.managerbackend.controller;
 
 import com.code.managerbackend.dto.SectorDTO;
+import com.code.managerbackend.exception.ResourceNotFoundException;
 import com.code.managerbackend.exception.RuleBusinessException;
 import com.code.managerbackend.model.Office;
 import com.code.managerbackend.model.Sector;
@@ -14,6 +15,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.BDDMockito;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -30,6 +32,7 @@ import java.time.LocalDate;
 import java.time.Month;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -126,6 +129,89 @@ public class SectorControllerTest {
                 .andExpect(jsonPath("errors[0]").value(message))
                 .andDo(print());
     }
+
+    @Test
+    @DisplayName("Deve retornar todos os setores cadastrados")
+    public void getAllSectorsTest() throws Exception {
+        //Cenário
+        SectorDTO sectorDTO = createSavedSector();
+
+        List<SectorDTO> sectorDTOS = Arrays.asList(sectorDTO);
+
+        BDDMockito.given(sectorService.listAll()).willReturn(sectorDTOS);
+
+        //Execução
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders
+                .get(API)
+                .accept(MediaType.APPLICATION_JSON);
+
+        mockMvc
+                .perform(request)
+                .andExpect(status().isOk())
+                .andDo(print());
+    }
+
+    @Test
+    @DisplayName("Deve retornar um setor quando informado o id")
+    public void getSectorByIdTest() throws Exception {
+        //Cenário
+        SectorDTO sectorDTO = createSavedSector();
+
+        BDDMockito.given(sectorService.listById(sectorDTO.getId())).willReturn(sectorDTO);
+
+        //Execução
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders
+                .get(API.concat("/"+sectorDTO.getId()))
+                .accept(MediaType.APPLICATION_JSON);
+
+        mockMvc
+                .perform(request)
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("id").value(sectorDTO.getId()))
+                .andExpect(jsonPath("name").value(sectorDTO.getName()))
+                .andExpect(jsonPath("situation").value(sectorDTO.getSituation()))
+                .andDo(print());
+    }
+
+    @Test
+    @DisplayName("Deve retornar uma mensagem de erro quando o id do setor informado não existir")
+    public void sectorNotFoundTest() throws Exception {
+        //Cenário
+        var message = "Not found sector with id = ";
+
+        BDDMockito.given(sectorService.listById(Mockito.anyLong()))
+                .willThrow(new ResourceNotFoundException(message));
+
+        //Execução
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders
+                .get(API.concat("/"+ 1))
+                .accept(MediaType.APPLICATION_JSON);
+
+        mockMvc
+                .perform(request)
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("message").value(message))
+                .andDo(print());
+    }
+
+    @Test
+    @DisplayName("Deve deletar um setor pelo id informado")
+    public void deleteSectorTest() throws Exception {
+        //Cenário
+        BDDMockito.given(sectorService.listById(Mockito.anyLong()))
+                .willReturn(SectorDTO.builder().id(1l).build());
+
+        //Execução
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders
+                .delete(API.concat("/"+ 1));
+
+        //Verificação
+        mockMvc
+                .perform(request)
+                .andExpect(status().isNoContent())
+                .andDo(print());
+    }
+
 
     private SectorDTO createSector() {
 

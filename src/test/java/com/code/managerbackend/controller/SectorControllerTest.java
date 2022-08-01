@@ -212,6 +212,45 @@ public class SectorControllerTest {
                 .andDo(print());
     }
 
+    @Test
+    @DisplayName("Deve atualizar um setor quando informado o id")
+    public void updateSectorByIdTest() throws Exception {
+        //Cenário
+
+        Long id = 1L;
+
+        //Json que será retornado como resposta
+        String json = objectToJson(createSavedSector());
+
+        SectorDTO updatingSector = SectorDTO.builder()
+                .id(1L).name("Finanças")
+                .initDate(LocalDate.now())
+                .situation(false)
+                .offices(null)
+                .build();
+
+        BDDMockito.given(sectorService.listById(id))
+                .willReturn(updatingSector);
+
+        SectorDTO updated = createSavedSector();
+
+        BDDMockito.given(sectorService.update(updatingSector))
+                .willReturn(updated);
+
+        //Desenho da requisição
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders
+                .put(API.concat("/" + id))
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .content(json);
+
+
+        mockMvc
+                .perform(request)
+                .andExpect(status().isOk())
+                .andDo(print());
+    }
+
 
     private SectorDTO createSector() {
 

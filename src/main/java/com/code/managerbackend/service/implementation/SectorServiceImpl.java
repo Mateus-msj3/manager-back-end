@@ -1,21 +1,18 @@
 package com.code.managerbackend.service.implementation;
 
-import com.code.managerbackend.dto.OfficeDTO;
 import com.code.managerbackend.dto.SectorDTO;
-import com.code.managerbackend.exception.ObjectNotFoundException;
 import com.code.managerbackend.exception.ResourceNotFoundException;
 import com.code.managerbackend.exception.RuleBusinessException;
 import com.code.managerbackend.model.Office;
 import com.code.managerbackend.model.Sector;
 import com.code.managerbackend.repository.SectorRepository;
+import com.code.managerbackend.service.OfficeService;
 import com.code.managerbackend.service.SectorService;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -27,6 +24,9 @@ public class SectorServiceImpl implements SectorService {
 
     @Autowired
     private ModelMapper modelMapper;
+
+    @Autowired
+    private OfficeService officeService;
 
     @Override
     public List<SectorDTO> listAll() {
@@ -48,11 +48,14 @@ public class SectorServiceImpl implements SectorService {
 
     @Override
     public SectorDTO save(SectorDTO sectorDTO) {
-        beforeSavingVerifyName(sectorDTO.getName());
+
+        validateSectorBeforeSave(sectorDTO.getName(), sectorDTO);
 
         Sector sector = modelMapper.map(sectorDTO, Sector.class);
+
         for (Office office : sector.getOffices()) {
             office.setSector(sector);
+            sector.setOffices(office.getSector().getOffices());
         }
         sectorRepository.save(sector);
         return sectorDTO;
@@ -63,7 +66,7 @@ public class SectorServiceImpl implements SectorService {
         Optional<Sector> currentSector = Optional.ofNullable(sectorRepository.findById(sectorDTO.getId())
                 .orElseThrow(() -> new ResourceNotFoundException("Not found office with id = " + sectorDTO.getId())));
 
-        beforeSavingVerifyName(sectorDTO.getName());
+        validateSectorBeforeUpdate(sectorDTO, currentSector);
 
         Sector sector = modelMapper.map(sectorDTO, Sector.class);
 
@@ -83,9 +86,34 @@ public class SectorServiceImpl implements SectorService {
         sectorRepository.deleteById(id);
     }
 
-    private void beforeSavingVerifyName(String name) {
+    private void checkSectorName(String name) {
         if (sectorRepository.existsByName(name)) {
             throw new RuleBusinessException("This name is already used by another sector.");
         }
+    }
+
+    private void validateSectorBeforeSave(String name, SectorDTO sectorDTO) {
+        checkSectorName(name);
+
+        for (int i = 0; i < sectorDTO.getOffices().size(); i++) {
+            Office positionsReceived = sectorDTO.getOffices().get(i);
+            officeService.existsByName(positionsReceived);
+        }
+    }
+
+    private void validateSectorBeforeUpdate(SectorDTO sectorDTO, Optional<Sector> optionalSector) {
+        if (!sectorDTO.getName().equals(optionalSector.get().getName())) {
+            checkSectorName(sectorDTO.getName());
+        }
+
+        for (int i = 0; i < sectorDTO.getOffices().size(); i++) {
+            String namePositionsReceived = sectorDTO.getOffices().get(i).getName();
+            String nameCurrentPositions = optionalSector.get().getOffices().get(i).getName();
+
+            if (!namePositionsReceived.equals(nameCurrentPositions)) {
+                officeService.existsByName(sectorDTO.getOffices().get(i));
+            }
+        }
+
     }
 }

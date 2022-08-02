@@ -1,8 +1,8 @@
 package com.code.managerbackend.service.implementation;
 
 import com.code.managerbackend.dto.OfficeDTO;
-import com.code.managerbackend.exception.ObjectNotFoundException;
 import com.code.managerbackend.exception.ResourceNotFoundException;
+import com.code.managerbackend.exception.RuleBusinessException;
 import com.code.managerbackend.model.Office;
 import com.code.managerbackend.repository.OfficeRepository;
 import com.code.managerbackend.service.OfficeService;
@@ -12,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -69,6 +68,13 @@ public class OfficeServiceImpl implements OfficeService {
             throw new ResourceNotFoundException("Not found office with id = " + id);
         }
         officeRepository.deleteById(id);
+    }
+
+    @Override
+    public void existsByName(Office office) {
+        if (officeRepository.existsByName(office.getName())) {
+            throw new RuleBusinessException("This name is already used by another office. " + office.getName());
+        }
     }
 
 }

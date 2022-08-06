@@ -1,8 +1,10 @@
 package com.code.managerbackend.dto;
 
 import com.code.managerbackend.model.Address;
-import com.code.managerbackend.model.Enum.SexoEum;
+import com.code.managerbackend.model.Enum.SexoEnum;
 import com.code.managerbackend.model.Enum.TipoContratoEnum;
+import com.code.managerbackend.model.Office;
+import com.code.managerbackend.model.Sector;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -34,7 +36,7 @@ public class EmployeeDTO {
     @Email
     private String email;
 
-    private SexoEum sex;
+    private SexoEnum sex;
 
     private String avatarUrl;
 
@@ -49,5 +51,9 @@ public class EmployeeDTO {
     private Boolean active;
 
     private TipoContratoEnum tipoContrato;
+
+    private Sector sector;
+
+    private Office office;
 
 }

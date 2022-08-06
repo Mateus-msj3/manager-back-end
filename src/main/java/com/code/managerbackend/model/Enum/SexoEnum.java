@@ -1,6 +1,6 @@
 package com.code.managerbackend.model.Enum;
 
-public enum SexoEum {
+public enum SexoEnum {
 
     MASCULINO,
     FEMININO,

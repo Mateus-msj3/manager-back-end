@@ -1,6 +1,6 @@
 package com.code.managerbackend.model;
 
-import com.code.managerbackend.model.Enum.SexoEum;
+import com.code.managerbackend.model.Enum.SexoEnum;
 import com.code.managerbackend.model.Enum.TipoContratoEnum;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
@@ -42,7 +42,7 @@ public class Employee {
     private String email;
 
     @Enumerated(value = EnumType.STRING)
-    private SexoEum sex;
+    private SexoEnum sex;
 
     @Column(nullable = false, length = 150)
     @NotEmpty(message = "{field.name.mandatory}")
@@ -63,4 +63,11 @@ public class Employee {
 
     @Enumerated(value = EnumType.STRING)
     private TipoContratoEnum tipoContrato;
+
+    @ManyToOne()
+    private Sector sector;
+
+    @ManyToOne()
+    private Office office;
+
 }

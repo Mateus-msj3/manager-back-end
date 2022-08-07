@@ -42,6 +42,15 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
+    public List<EmployeeDTO> listByName(String name) {
+        List<Employee> employees = employeeRepository.findByNameContainingIgnoreCase(name);
+
+        return employees.stream()
+                .map(employee -> modelMapper.map(employee, EmployeeDTO.class))
+                .collect(Collectors.toList());
+    }
+
+    @Override
     public EmployeeDTO save(EmployeeDTO employeeDTO) {
 
         beforeSavingCheckEmployeeCpf(employeeDTO.getCpf());

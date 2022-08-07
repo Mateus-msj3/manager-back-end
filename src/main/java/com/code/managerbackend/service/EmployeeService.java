@@ -10,6 +10,8 @@ public interface EmployeeService {
 
     EmployeeDTO listById(Long id);
 
+    List<EmployeeDTO> listByName(String name);
+
     EmployeeDTO save(EmployeeDTO employeeDTO);
 
     EmployeeDTO update(EmployeeDTO employeeDTO);

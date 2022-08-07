@@ -28,6 +28,12 @@ public class EmployeeController {
         return ResponseEntity.ok().body(employeeDTO);
     }
 
+    @GetMapping("/name/{name}")
+    public ResponseEntity<List<EmployeeDTO>> listByName(@PathVariable String name) {
+        List<EmployeeDTO> list = employeeService.listByName(name);
+        return ResponseEntity.ok().body(list);
+    }
+
     @PostMapping
     public ResponseEntity<EmployeeDTO> save(@RequestBody @Valid EmployeeDTO employeeDTO) {
         employeeDTO = employeeService.save(employeeDTO);

@@ -1,6 +1,7 @@
 package com.code.managerbackend.controller;
 
 import com.code.managerbackend.dto.EmployeeDTO;
+import com.code.managerbackend.model.Sector;
 import com.code.managerbackend.service.EmployeeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -38,6 +39,12 @@ public class EmployeeController {
     public ResponseEntity<EmployeeDTO> listByCpf(@PathVariable String cpf){
         EmployeeDTO employeeDTO = employeeService.listByCpf(cpf);
         return ResponseEntity.ok().body(employeeDTO);
+    }
+
+    @GetMapping("/sector/{sector}")
+    public ResponseEntity<List<EmployeeDTO>> listBySector(@PathVariable Sector sector) {
+        List<EmployeeDTO> list = employeeService.listBySector(sector);
+        return ResponseEntity.ok().body(list);
     }
 
     @PostMapping

@@ -20,7 +20,7 @@ public interface EmployeeRepository extends JpaRepository<Employee, Long> {
 
     Employee findByCpf(String cpf);
 
-    @Query(name = "SELECT e FROM Employee e WHERE e.sector = ?1")
+    @Query(name = "SELECT e FROM Employee e WHERE e.sector = :sector")
     List<Employee> findEmployeeBySector(Sector sector);
 
     @Query(name = "SELECT e FROM Employee e WHERE e.office = ?1")

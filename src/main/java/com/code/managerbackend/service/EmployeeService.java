@@ -1,6 +1,7 @@
 package com.code.managerbackend.service;
 
 import com.code.managerbackend.dto.EmployeeDTO;
+import com.code.managerbackend.model.Sector;
 
 import java.util.List;
 
@@ -13,6 +14,8 @@ public interface EmployeeService {
     List<EmployeeDTO> listByName(String name);
 
     EmployeeDTO listByCpf(String cpf);
+
+    List<EmployeeDTO> listBySector(Sector sector);
 
     EmployeeDTO save(EmployeeDTO employeeDTO);
 

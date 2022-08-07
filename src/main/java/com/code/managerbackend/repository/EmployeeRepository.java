@@ -23,7 +23,7 @@ public interface EmployeeRepository extends JpaRepository<Employee, Long> {
     @Query(name = "SELECT e FROM Employee e WHERE e.sector = :sector")
     List<Employee> findEmployeeBySector(Sector sector);
 
-    @Query(name = "SELECT e FROM Employee e WHERE e.office = ?1")
+    @Query(name = "SELECT e FROM Employee e WHERE e.office = :office")
     List<Employee> findEmployeeByOffice(Office office);
 
 }

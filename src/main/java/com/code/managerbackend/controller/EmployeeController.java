@@ -1,6 +1,7 @@
 package com.code.managerbackend.controller;
 
 import com.code.managerbackend.dto.EmployeeDTO;
+import com.code.managerbackend.model.Office;
 import com.code.managerbackend.model.Sector;
 import com.code.managerbackend.service.EmployeeService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,6 +45,12 @@ public class EmployeeController {
     @GetMapping("/sector/{sector}")
     public ResponseEntity<List<EmployeeDTO>> listBySector(@PathVariable Sector sector) {
         List<EmployeeDTO> list = employeeService.listBySector(sector);
+        return ResponseEntity.ok().body(list);
+    }
+
+    @GetMapping("/office/{office}")
+    public ResponseEntity<List<EmployeeDTO>> listByOffice(@PathVariable Office office) {
+        List<EmployeeDTO> list = employeeService.listByOffice(office);
         return ResponseEntity.ok().body(list);
     }
 

@@ -4,6 +4,7 @@ import com.code.managerbackend.dto.EmployeeDTO;
 import com.code.managerbackend.exception.ResourceNotFoundException;
 import com.code.managerbackend.exception.RuleBusinessException;
 import com.code.managerbackend.model.Employee;
+import com.code.managerbackend.model.Office;
 import com.code.managerbackend.model.Sector;
 import com.code.managerbackend.repository.EmployeeRepository;
 import com.code.managerbackend.service.EmployeeService;
@@ -63,6 +64,15 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Override
     public List<EmployeeDTO> listBySector(Sector sector) {
         List<Employee> employees = employeeRepository.findEmployeeBySector(sector);
+
+        return employees.stream()
+                .map(employee -> modelMapper.map(employee, EmployeeDTO.class))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<EmployeeDTO> listByOffice(Office office) {
+        List<Employee> employees = employeeRepository.findEmployeeByOffice(office);
 
         return employees.stream()
                 .map(employee -> modelMapper.map(employee, EmployeeDTO.class))

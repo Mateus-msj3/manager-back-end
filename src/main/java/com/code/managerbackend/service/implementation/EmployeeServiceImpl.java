@@ -51,6 +51,15 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
+    public EmployeeDTO listByCpf(String cpf) {
+        Optional<Employee> employee = Optional.ofNullable(Optional.ofNullable(employeeRepository.findByCpf(cpf))
+                .orElseThrow(() -> new ResourceNotFoundException("Not found employee with id = " + cpf)));
+
+        EmployeeDTO employeeDTO = modelMapper.map(employee.get(), EmployeeDTO.class);
+        return employeeDTO;
+    }
+
+    @Override
     public EmployeeDTO save(EmployeeDTO employeeDTO) {
 
         beforeSavingCheckEmployeeCpf(employeeDTO.getCpf());

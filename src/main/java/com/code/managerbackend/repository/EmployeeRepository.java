@@ -18,7 +18,7 @@ public interface EmployeeRepository extends JpaRepository<Employee, Long> {
 
     List<Employee> findByNameContainingIgnoreCase(String name);
 
-    EmployeeDTO findByCpf(String cpf);
+    Employee findByCpf(String cpf);
 
     @Query(name = "SELECT e FROM Employee e WHERE e.sector = ?1")
     List<Employee> findEmployeeBySector(Sector sector);

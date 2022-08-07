@@ -12,6 +12,8 @@ public interface EmployeeService {
 
     List<EmployeeDTO> listByName(String name);
 
+    EmployeeDTO listByCpf(String cpf);
+
     EmployeeDTO save(EmployeeDTO employeeDTO);
 
     EmployeeDTO update(EmployeeDTO employeeDTO);

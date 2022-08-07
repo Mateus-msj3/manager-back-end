@@ -34,6 +34,12 @@ public class EmployeeController {
         return ResponseEntity.ok().body(list);
     }
 
+    @GetMapping("/cpf/{cpf}")
+    public ResponseEntity<EmployeeDTO> listByCpf(@PathVariable String cpf){
+        EmployeeDTO employeeDTO = employeeService.listByCpf(cpf);
+        return ResponseEntity.ok().body(employeeDTO);
+    }
+
     @PostMapping
     public ResponseEntity<EmployeeDTO> save(@RequestBody @Valid EmployeeDTO employeeDTO) {
         employeeDTO = employeeService.save(employeeDTO);

@@ -36,7 +36,7 @@ public class ResourceServerConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests()
-                .antMatchers("/api/sectors/**").permitAll()
+                .antMatchers("/api/sectors/**", "/api/users/**").permitAll()
                 .anyRequest().authenticated()
                 .and().csrf().disable().cors()
                 .and().sessionManagement()

@@ -5,6 +5,7 @@ import com.code.managerbackend.model.Enum.SexoEnum;
 import com.code.managerbackend.model.Enum.TipoContratoEnum;
 import com.code.managerbackend.model.Office;
 import com.code.managerbackend.model.Sector;
+import com.code.managerbackend.model.User;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -55,5 +56,7 @@ public class EmployeeDTO {
     private Sector sector;
 
     private Office office;
+
+    private User user;
 
 }

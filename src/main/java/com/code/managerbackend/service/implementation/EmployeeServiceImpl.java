@@ -1,6 +1,7 @@
 package com.code.managerbackend.service.implementation;
 
 import com.code.managerbackend.dto.EmployeeDTO;
+import com.code.managerbackend.dto.UserDTO;
 import com.code.managerbackend.exception.ResourceNotFoundException;
 import com.code.managerbackend.exception.RuleBusinessException;
 import com.code.managerbackend.model.Employee;
@@ -8,6 +9,7 @@ import com.code.managerbackend.model.Office;
 import com.code.managerbackend.model.Sector;
 import com.code.managerbackend.repository.EmployeeRepository;
 import com.code.managerbackend.service.EmployeeService;
+import com.code.managerbackend.service.UserService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -24,6 +26,9 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Autowired
     private ModelMapper modelMapper;
+
+    @Autowired
+    private UserService userService;
 
     @Override
     public List<EmployeeDTO> listAll() {
@@ -83,6 +88,8 @@ public class EmployeeServiceImpl implements EmployeeService {
     public EmployeeDTO save(EmployeeDTO employeeDTO) {
 
         beforeSavingCheckEmployeeCpf(employeeDTO.getCpf());
+        beforeSavingCheckUser(employeeDTO);
+
         Employee employee = modelMapper.map(employeeDTO, Employee.class);
 
         employeeRepository.save(employee);
@@ -96,6 +103,7 @@ public class EmployeeServiceImpl implements EmployeeService {
                 .orElseThrow(() -> new ResourceNotFoundException("Not found employee with id = " + employeeDTO.getId())));
 
         beforeUpdatingCheckEmployeeCpf(employeeDTO, currentEmployee);
+        beforeUpdatingCheckUser(employeeDTO);
 
         Employee employee = modelMapper.map(employeeDTO, Employee.class);
 
@@ -122,4 +130,19 @@ public class EmployeeServiceImpl implements EmployeeService {
             beforeSavingCheckEmployeeCpf(employeeDTO.getCpf());
         }
     }
+
+    private void beforeSavingCheckUser(EmployeeDTO employeeDTO) {
+        if (employeeDTO.getUser().getId() == null) {
+            UserDTO userDTO = modelMapper.map(employeeDTO.getUser(), UserDTO.class);
+            userService.save(userDTO);
+        }
+    }
+
+    private void beforeUpdatingCheckUser(EmployeeDTO employeeDTO) {
+        if (employeeDTO.getUser().getId() != null) {
+            UserDTO userDTO = modelMapper.map(employeeDTO.getUser(), UserDTO.class);
+            userService.update(userDTO);
+        }
+    }
+
 }

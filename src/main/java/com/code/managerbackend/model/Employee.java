@@ -70,4 +70,7 @@ public class Employee {
     @ManyToOne()
     private Office office;
 
+    @ManyToOne(cascade=CascadeType.PERSIST)
+    private User user;
+
 }

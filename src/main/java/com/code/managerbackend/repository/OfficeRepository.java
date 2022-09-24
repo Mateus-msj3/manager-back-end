@@ -11,3 +11,4 @@ public interface OfficeRepository extends JpaRepository<Office, Long> {
 
     boolean existsByName(String name);
 }
+

@@ -21,7 +21,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 @ExtendWith(SpringExtension.class)
 @ActiveProfiles("test")
-public class SectorServiceTest {
+public class SectorServiceImplTest {
 
     @MockBean
     SectorService sectorService;

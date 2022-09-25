@@ -1,5 +1,6 @@
 package com.code.managerbackend.controller;
 
+import com.code.managerbackend.dto.FilterSectorDTO;
 import com.code.managerbackend.dto.SectorDTO;
 import com.code.managerbackend.service.SectorService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,6 +40,11 @@ public class SectorController {
         sectorDTO.setId(id);
         sectorDTO = sectorService.update(sectorDTO);
         return ResponseEntity.ok().body(sectorDTO);
+    }
+
+    @GetMapping("/filterSector")
+    public List<SectorDTO> filterSector(FilterSectorDTO filterSectorDTO) {
+        return sectorService.filterSector(filterSectorDTO);
     }
 
     @DeleteMapping("/{id}")

@@ -1,5 +1,6 @@
 package com.code.managerbackend.service.implementation;
 
+import com.code.managerbackend.dto.FilterSectorDTO;
 import com.code.managerbackend.dto.SectorDTO;
 import com.code.managerbackend.exception.ResourceNotFoundException;
 import com.code.managerbackend.exception.RuleBusinessException;
@@ -76,6 +77,14 @@ public class SectorServiceImpl implements SectorService {
         }
         sectorRepository.save(sector);
         return sectorDTO;
+    }
+
+    @Override
+    public List<SectorDTO> filterSector(FilterSectorDTO filterSectorDTO) {
+        List<Sector> sectors = sectorRepository.filterSector(filterSectorDTO.getIdOfficie(), filterSectorDTO.getName(), filterSectorDTO.getSituation());
+
+        return sectors.stream().map(sector -> modelMapper.map(sector, SectorDTO.class))
+                .collect(Collectors.toList());
     }
 
     @Override

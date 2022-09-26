@@ -42,8 +42,8 @@ public class SectorController {
         return ResponseEntity.ok().body(sectorDTO);
     }
 
-    @GetMapping("/filterSector")
-    public List<SectorDTO> filterSector(FilterSectorDTO filterSectorDTO) {
+    @PostMapping("/filterSector")
+    public List<SectorDTO> filterSector(@RequestBody FilterSectorDTO filterSectorDTO) {
         return sectorService.filterSector(filterSectorDTO);
     }
 

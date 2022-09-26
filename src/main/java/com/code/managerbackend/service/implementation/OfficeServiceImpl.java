@@ -1,6 +1,7 @@
 package com.code.managerbackend.service.implementation;
 
 import com.code.managerbackend.dto.OfficeDTO;
+import com.code.managerbackend.dto.SectorDTO;
 import com.code.managerbackend.exception.ResourceNotFoundException;
 import com.code.managerbackend.exception.RuleBusinessException;
 import com.code.managerbackend.model.Office;
@@ -59,6 +60,14 @@ public class OfficeServiceImpl implements OfficeService {
                 officeRepository.save(office);
 
         return officeDTO;
+    }
+
+    @Override
+    public List<OfficeDTO> findOfficeBySectorId(Long id) {
+        List<Office> offices = officeRepository.findOfficeBySectorId(id);
+
+        return offices.stream().map(office -> modelMapper.map(office, OfficeDTO.class))
+                .collect(Collectors.toList());
     }
 
     @Override

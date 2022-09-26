@@ -15,6 +15,8 @@ public interface OfficeService {
 
     OfficeDTO update(OfficeDTO officeDTO);
 
+    List<OfficeDTO> findOfficeBySectorId(Long id);
+
     void delete(Long id);
 
     void existsByName(Office office);

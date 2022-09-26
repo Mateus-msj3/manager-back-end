@@ -40,6 +40,11 @@ public class OfficeController {
         return ResponseEntity.ok().body(officeDTO);
     }
 
+    @GetMapping("/idSector/{id}")
+    public List<OfficeDTO> findOfficeByIdSector(@PathVariable Long id) {
+        return officeService.findOfficeBySectorId(id);
+    }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<?> delete(@PathVariable Long id) {
         officeService.delete(id);
